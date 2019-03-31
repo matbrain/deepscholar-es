@@ -8,13 +8,13 @@ cp .env.sample .env
 cp docker-compose.yml.sample docker-compose.yml
 ```
 
-1. Set the id and password in `.env`
+2. Set the id and password in `.env`
 ```
 ELASTICSEARCH_AUTH_ID=ABCDEFGHIJKLMN
 ELASTICSEARCH_AUTH_PASSWORD=01234567890
 ```
 
-1. Run docker-compose
+3. Run docker-compose
 ```
 docker-compose -f docker-compose.yml up
 ```
