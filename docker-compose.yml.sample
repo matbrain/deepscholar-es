@@ -1,0 +1,46 @@
+version: "3"
+services:
+  elasticsearch:
+    image: elasticsearch:6.5.3
+    container_name: elasticsearch
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "http.cors.enabled=true"
+      - "http.cors.allow-origin=*"
+      - "http.cors.allow-methods=OPTIONS,HEAD,GET,POST,PUT,DELETE"
+      - "http.cors.allow-headers=Authorization,X-Requested-With,X-Auth-Token,Content-Type,Content-Length"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200
+    networks:
+      - esnet
+  auth:
+    image: nginx
+    volumes:
+      - ./auth/etc/nginx/conf.d/default.conf.template:/etc/nginx/conf.d/default.conf.template
+    depends_on:
+      - elasticsearch
+    ports:
+      - "8080:8080"
+    networks:
+      - esnet
+    env_file:
+      - ./.env
+    command: >
+        /bin/bash -c
+        "AUTH_HASH=`echo -n $${ELASTICSEARCH_AUTH_ID}:$${ELASTICSEARCH_AUTH_PASSWORD} | base64`
+        envsubst '
+        $$AUTH_HASH
+        ' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+volumes:
+  esdata:
+    driver: local
+networks:
+  esnet:
