@@ -1,5 +1,5 @@
 # DeepScholar-ES
-This repository provides a dockerfile for using Elasticsearch in DeepScholar.
+This repository provides a dockerfile for using Elasticsearch on DeepScholar.
 
 ## Setup
 1. Copy the sample files
